@@ -7,33 +7,29 @@ import java.io.IOException;
 
 public class Dictionary {
 	public static String fileName = "dictionary.txt"; // The name of the file to open.
+	public static int words = 0;
 
-	private boolean chckIfAvailable (RedBlackTree<Integer> t, String str) {
-		boolean flag = false; //We predict that word is @ dictionary
-		for(int i = 0; i < str.length(); i++ ) {
-			if (!t.search((int)str.charAt(i))){
-				flag = true;
-			}
-		}
+	private static boolean chckIfAvailable(RedBlackTree<String> t, String str) {
+		boolean flag = true; // We predict that word isn't @ dictionary
+		if (t.search(str) == false)
+			flag = false;
 		return flag;
 	}
-	public int loadADictionary(RedBlackTree<Integer> t) {
-		String line = null;
-		int additions = 0; // number of successful additions
 
+	public static void loadADictionary(RedBlackTree<String> t) {
+		String line = null;
 		try {
 			// FileReader reads text files in the default encoding.
 			FileReader fileReader = new FileReader(fileName);
-
 			// Always wrap FileReader in BufferedReader.
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 
 			while ((line = bufferedReader.readLine()) != null) {
-				System.out.println(line);
-				if(chckIfAvailable(t,line))
-					// insert
-					
-				additions++;
+				if (!chckIfAvailable(t, line)) {
+					t.add(line);
+					words++;
+				} else
+					System.out.println("Duplicated!");
 			}
 
 			// Always close files.
@@ -45,6 +41,32 @@ public class Dictionary {
 			// Or we could just do this:
 			// ex.printStackTrace();
 		}
-		return additions;
+	}
+
+	public static void printDictionarySize(RedBlackTree<String> t) {
+		System.out.println("Dictionary size is : " + words);
+	}
+
+	public static Boolean lookUpAWord(RedBlackTree<String> t, String str) {
+		boolean flag = true; // We predict that word isn't @ dictionary
+		if (t.search(str) == null)
+			flag = false;
+		return flag;
+	}
+
+	public static void removeAWord(RedBlackTree<String> t, String str) throws Exception {
+		if (chckIfAvailable(t, str)) {
+			t.remove(str);
+			words--;
+		} else
+			System.out.println("Dictionary doesn't contain required word!");
+	}
+
+	public static void insertAWord(RedBlackTree<String> t, String str) {
+		if (!chckIfAvailable(t, str)) {
+			t.add(str);
+			words++;
+		} else
+			System.out.println("Duplicated!");
 	}
 }
